@@ -1,9 +1,8 @@
-
-function makeRequest<T>(method: 'GET' | 'POST', uri:string, body?:any) {
+function makeRequest<T>(method: 'GET' | 'POST', uri: string, body?: any) {
   return new Promise<T>((resolve, reject) => {
     const xhr = new XMLHttpRequest()
     xhr.open(method, uri, true)
-    xhr.onreadystatechange = function() {
+    xhr.onreadystatechange = function () {
       if (xhr.readyState !== 4) return
       if (xhr.status < 400 && xhr.status > 0)
         return resolve(JSON.parse(xhr.responseText || '{}') as T)
@@ -18,9 +17,9 @@ function makeRequest<T>(method: 'GET' | 'POST', uri:string, body?:any) {
   })
 }
 
-export const get = (url:string) => makeRequest('GET', url, null)
+export const get = (url: string) => makeRequest('GET', url, null)
 
-export const stream = (url:string) => {
+export const stream = (url: string) => {
   var xhr = new XMLHttpRequest()
   xhr.open('GET', url, true)
   xhr.send()

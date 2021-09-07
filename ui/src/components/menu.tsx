@@ -1,6 +1,14 @@
-const React = require('react')
+import React from 'react'
 
-const MenuSection = class extends React.Component {
+interface ISectionProps {
+  style: React.CSSProperties
+  active: boolean
+  path: string
+  icon: string
+  name: string
+}
+
+const MenuSection = class extends React.Component<ISectionProps> {
   render() {
     return (
       <li
@@ -16,12 +24,25 @@ const MenuSection = class extends React.Component {
   }
 }
 
-module.exports = class extends React.Component {
+interface IMenuItem {
+  name: string
+  active: boolean
+  icon: string
+  path: string
+  style: React.CSSProperties
+}
+
+interface IProps {
+  menu: IMenuItem[]
+}
+
+export default class Menu extends React.Component<IProps> {
   render() {
     return (
       <ul className="sidebar-menu">
         {this.props.menu.map(x => (
-          <MenuSection key={x.name}
+          <MenuSection
+            key={x.name}
             active={x.active}
             icon={x.icon}
             name={x.name}

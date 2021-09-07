@@ -1,8 +1,8 @@
 import React from 'react'
 
 interface IValue {
-  grain:string
-  method:string
+  grain: string
+  method: string
 }
 
 interface IProps {
@@ -11,7 +11,7 @@ interface IProps {
 }
 
 export default class GrainMethodTable extends React.Component<IProps> {
-  renderRow = (value:IValue) => {
+  renderRow = (value: IValue) => {
     return (
       <tr key={`${value.grain}.${value.method}`}>
         <td style={{ wordWrap: 'break-word' }}>
@@ -28,19 +28,19 @@ export default class GrainMethodTable extends React.Component<IProps> {
     )
   }
   render() {
-    const values = this.props.values || [];
+    const values = this.props.values || []
 
     return (
       <table className="table" style={{ tableLayout: 'fixed', width: '100%' }}>
         <tbody>
           {values.map(this.renderRow)}
-          {values.length === 0 &&
+          {values.length === 0 && (
             <tr>
               <td>
                 <i>No data</i>
               </td>
             </tr>
-          }
+          )}
         </tbody>
       </table>
     )

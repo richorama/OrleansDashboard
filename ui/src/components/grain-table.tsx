@@ -1,16 +1,32 @@
-const React = require('react')
+import React from 'react'
 
-module.exports = class GrainTable extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      sortBy: 'activationCount',
-      sortByAsc: false
-    }
-    this.handleChangeSort = this.handleChangeSort.bind(this)
+interface IStat {
+  grainType: string
+  activationCount: number
+  totalCalls: number
+  totalExceptions: number
+  totalAwaitTime: number
+  siloAddress: string
+  totalSeconds: number
+}
+
+interface IProps {
+  data: IStat[]
+  silo: string
+}
+
+interface IState {
+  sortBy: string
+  sortByAsc: boolean
+}
+
+export default class GrainTable extends React.Component<IProps, IState> {
+  state: IState = {
+    sortBy: 'activationCount',
+    sortByAsc: false
   }
 
-  getSorter() {
+  getSorter(): ISorter | null {
     let sorter
     switch (this.state.sortBy) {
       case 'activationCount':
@@ -19,7 +35,7 @@ module.exports = class GrainTable extends React.Component {
           : sortByActivationCountDesc
         break
       case 'grain':
-        sorter = this.state.sortByAsc ? sortByGrainAsc : sortBygrainDesc
+        sorter = this.state.sortByAsc ? sortByGrainAsc : sortByGrainDesc
         break
       case 'exceptionRate':
         sorter = this.state.sortByAsc
@@ -28,8 +44,8 @@ module.exports = class GrainTable extends React.Component {
         break
       case 'totalCalls':
         sorter = this.state.sortByAsc
-          ? sortBytotalCallsAsc
-          : sortBytotalCallsDec
+          ? sortByTotalCallsAsc
+          : sortByTotalCallsDec
         break
       case 'totalAwaitTime':
         sorter = this.state.sortByAsc
@@ -43,7 +59,7 @@ module.exports = class GrainTable extends React.Component {
     return sorter
   }
 
-  handleChangeSort(e) {
+  handleChangeSort = (e: any) => {
     let column = e.currentTarget.dataset['column']
     if (column) {
       this.setState({
@@ -53,7 +69,7 @@ module.exports = class GrainTable extends React.Component {
     }
   }
 
-  renderStat(stat) {
+  renderStat(stat: IStat) {
     var parts = stat.grainType.split('.')
     var grainClassName = parts[parts.length - 1]
     var systemGrain = stat.grainType.startsWith('Orleans.')
@@ -107,7 +123,7 @@ module.exports = class GrainTable extends React.Component {
   }
 
   render() {
-    var grainTypes = {}
+    var grainTypes: any = {}
     if (!this.props.data) return null
 
     this.props.data.forEach(stat => {
@@ -134,10 +150,13 @@ module.exports = class GrainTable extends React.Component {
     var values = Object.keys(grainTypes).map(key => {
       var x = grainTypes[key]
       x.grainType = key
-      return x
+      return x as IStat
     })
 
-    values.sort(this.getSorter())
+    const sorter = this.getSorter()
+    if (sorter) {
+      values.sort(sorter)
+    }
 
     return (
       <table className="table">
@@ -218,17 +237,16 @@ module.exports = class GrainTable extends React.Component {
   }
 }
 
-function sortByActivationCountAsc(a, b) {
-  return a.activationCount - b.activationCount
-}
+type ISorter = (a: IStat, b: IStat) => number
 
-function sortByActivationCountDesc(a, b) {
-  return sortByActivationCountAsc(b, a)
-}
+const sortByActivationCountAsc: ISorter = (a, b) =>
+  a.activationCount - b.activationCount
+const sortByActivationCountDesc: ISorter = (a, b) =>
+  sortByActivationCountAsc(b, a)
 
-function sortByGrainAsc(a, b) {
-  var parts = x => x.grainType.split('.')
-  var grainClassName = x => parts(x)[parts(x).length - 1]
+const sortByGrainAsc: ISorter = (a, b) => {
+  var parts = (x: IStat) => x.grainType.split('.')
+  var grainClassName = (x: IStat) => parts(x)[parts(x).length - 1]
   return grainClassName(a) < grainClassName(b)
     ? -1
     : grainClassName(a) > grainClassName(b)
@@ -236,27 +254,14 @@ function sortByGrainAsc(a, b) {
     : 0
 }
 
-function sortBygrainDesc(a, b) {
-  return sortByGrainAsc(b, a)
-}
+const sortByGrainDesc: ISorter = (a, b) => sortByGrainAsc(b, a)
+const sortByExceptionRateAsc: ISorter = (a, b) =>
+  a.totalExceptions - b.totalExceptions
+const sortByExceptionRateDesc: ISorter = (a, b) => sortByExceptionRateAsc(b, a)
+const sortByTotalCallsAsc: ISorter = (a, b) => a.totalCalls - b.totalCalls
+const sortByTotalCallsDec: ISorter = (a, b) => sortByTotalCallsAsc(b, a)
 
-function sortByExceptionRateAsc(a, b) {
-  return a.totalExceptions - b.totalExceptions
-}
-
-function sortByExceptionRateDesc(a, b) {
-  return sortByExceptionRateAsc(b, a)
-}
-
-function sortBytotalCallsAsc(a, b) {
-  return a.totalCalls - b.totalCalls
-}
-
-function sortBytotalCallsDec(a, b) {
-  return sortBytotalCallsAsc(b, a)
-}
-
-function sortByTotalAwaitTimeAsc(a, b) {
+const sortByTotalAwaitTimeAsc: ISorter = (a, b) => {
   if (a.totalCalls === 0 && b.totalCalls === 0) {
     return 0
   } else if (a.totalCalls === 0 || b.totalCalls === 0) {
@@ -266,6 +271,5 @@ function sortByTotalAwaitTimeAsc(a, b) {
   }
 }
 
-function sortByTotalAwaitTimeDesc(a, b) {
-  return sortByTotalAwaitTimeAsc(b, a)
-}
+const sortByTotalAwaitTimeDesc: ISorter = (a, b) =>
+  sortByTotalAwaitTimeAsc(b, a)

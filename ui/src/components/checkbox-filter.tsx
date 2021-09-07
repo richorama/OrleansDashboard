@@ -1,7 +1,7 @@
 import React from 'react'
 
 interface ISettings {
-  systemGrainsHidden: boolean,
+  systemGrainsHidden: boolean
   dashboardGrainsHidden: boolean
 }
 
@@ -16,8 +16,7 @@ interface IState {
 }
 
 export default class CheckboxFilter extends React.Component<IProps, IState> {
-
-  state:IState = {
+  state: IState = {
     hidden:
       this.props.preference === 'system'
         ? this.props.settings.systemGrainsHidden

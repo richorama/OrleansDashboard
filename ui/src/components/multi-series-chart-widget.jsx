@@ -1,7 +1,10 @@
 const React = require('react')
 const Chart = require('react-chartjs').Line
 
-const colours = [[120, 57, 136], [236, 151, 31]]
+const colours = [
+  [120, 57, 136],
+  [236, 151, 31]
+]
 
 // this control is a bit of a temporary hack, until I have a multi-series chart widget
 module.exports = class extends React.Component {
@@ -21,7 +24,7 @@ module.exports = class extends React.Component {
     if (this.state.width === 0) return setTimeout(this.getWidth, 0)
 
     var data = {
-      labels: this.props.series[0].map(function(x) {
+      labels: this.props.series[0].map(function (x) {
         return ''
       }),
       datasets: this.props.series.map((data, index) => {

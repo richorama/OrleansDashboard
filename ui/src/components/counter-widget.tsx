@@ -1,10 +1,10 @@
 import React from 'react'
 
 interface IProps {
-  link:string
-  title:string
+  link: string
+  title: string
   counter: number
-  icon:string
+  icon: string
 }
 
 export default class CounterWidget extends React.Component<IProps> {
