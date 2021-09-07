@@ -1,12 +1,14 @@
 import React from 'react'
 
-module.exports = class extends React.Component {
-  constructor(props) {
-    super(props)
-    this.renderMore = this.renderMore.bind(this)
-  }
+interface IProps {
+  link:string
+  title:string
+  counter: number
+  icon:string
+}
 
-  renderMore() {
+export default class CounterWidget extends React.Component<IProps> {
+  renderMore = () => {
     if (!this.props.link) return null
     return (
       <a href={this.props.link} className="small-box-footer">

@@ -1,11 +1,17 @@
-const React = require('react')
+import React from 'react'
 
-module.exports = class extends React.Component {
-  constructor(props) {
-    super(props)
-    this.renderRow = this.renderRow.bind(this)
-  }
-  renderRow(value) {
+interface IValue {
+  grain:string
+  method:string
+}
+
+interface IProps {
+  values: IValue[]
+  valueFormatter: (value: IValue) => string
+}
+
+export default class GrainMethodTable extends React.Component<IProps> {
+  renderRow = (value:IValue) => {
     return (
       <tr key={`${value.grain}.${value.method}`}>
         <td style={{ wordWrap: 'break-word' }}>

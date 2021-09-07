@@ -1,30 +1,27 @@
-const React = require('react')
-const Chart = require('react-chartjs').Doughnut
+import React, { createRef } from 'react'
+import { Doughnut } from 'react-chartjs'
 
-module.exports = class extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = { width: 0 }
-    this.getWidth = this.getWidth.bind(this)
-    this.getColour = this.getColour.bind(this)
-    this.renderChart = this.renderChart.bind(this)
+interface IProps {
+  value: number
+  max: number
+  title: string
+  description: string
+}
+
+interface IState {
+  width: number
+}
+
+export default class GaugeWidget extends React.Component<IProps, IState> {
+  state: IState = { width: 0 }
+
+  getWidth = () => {
+    this.setState({ width: this.containerRef.current?.clientWidth || 0 })
   }
 
-  getWidth() {
-    this.setState({ width: this.refs.container.offsetWidth })
-  }
+  getColour = (alpha: number) => `rgba(120, 57, 136, ${alpha})`
 
-  getColour(alpha) {
-    return `rgba(120, 57, 136, ${alpha})`
-    /*
-        var percent = 100 * this.props.value / this.props.max;
-        if (percent > 90) return 'rgba(201,48,44,' + alpha.toString() + ')';
-        if (percent > 66) return 'rgba(236,151,31,' + alpha.toString() + ')';
-        return 'rgba(51,122,183,' + alpha.toString() + ')';
-		*/
-  }
-
-  renderChart() {
+  renderChart = () => {
     if (this.state.width === 0) return setTimeout(this.getWidth, 0)
 
     var data = {
@@ -48,7 +45,7 @@ module.exports = class extends React.Component {
     }
 
     return (
-      <Chart
+      <Doughnut
         data={data}
         options={options}
         width={this.state.width}
@@ -57,11 +54,13 @@ module.exports = class extends React.Component {
     )
   }
 
+  containerRef = createRef<HTMLDivElement>()
+
   render() {
     var percent = Math.floor((100 * this.props.value) / this.props.max)
     return (
       <div
-        ref="container"
+        ref={this.containerRef}
         style={{
           textAlign: 'center',
           position: 'relative',
@@ -74,11 +73,10 @@ module.exports = class extends React.Component {
             position: 'absolute',
             textAlign: 'center',
             fontSize: '60px',
-            fontWeight: '100',
-            left: '0',
-            right: '0',
+            left: 0,
+            right: 0,
             top: '50%',
-            marginTop: '-45px'
+            marginTop: -45
           }}
         >
           {percent}%
@@ -88,7 +86,6 @@ module.exports = class extends React.Component {
             position: 'absolute',
             textAlign: 'center',
             fontSize: '60px',
-            fontWeight: '100',
             width: '100%'
           }}
         />
