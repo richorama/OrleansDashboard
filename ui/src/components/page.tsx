@@ -1,6 +1,11 @@
-var React = require('react')
+import React from 'react'
 
-module.exports = class extends React.Component {
+interface IProps {
+  title: string
+  subTitle: string
+}
+
+export default class Page extends React.Component<IProps> {
   render() {
     return (
       <div>

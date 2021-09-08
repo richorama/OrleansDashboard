@@ -1,11 +1,11 @@
-var React = require('react')
+import React from 'react'
 
-module.exports = class extends React.Component {
-  constructor(props) {
-    super(props)
-    this.renderRow = this.renderRow.bind(this)
-  }
-  renderRow(key) {
+interface IProps {
+  data: any
+}
+
+module.exports = class extends React.Component<IProps> {
+  renderRow = (key: string) => {
     return (
       <tr key={key}>
         <td style={{ textOverflow: 'ellipsis' }}>{key}</td>

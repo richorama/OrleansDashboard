@@ -1,6 +1,6 @@
 import React from 'react'
 
-interface ISettings {
+export interface ISettings {
   systemGrainsHidden: boolean
   dashboardGrainsHidden: boolean
 }

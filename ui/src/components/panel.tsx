@@ -1,15 +1,18 @@
-var React = require('react')
+import React from 'react'
 
-module.exports = class extends React.Component {
+interface IProps {
+  title: string
+  subTitle?: string
+  footer?: React.ReactFragment
+}
+
+export default class Panel extends React.Component<IProps> {
   render() {
-    if (this.props.children.length) {
-      var body = this.props.children[0]
-      var footer = (
-        <div className="box-footer clearfix">{this.props.children[1]}</div>
-      )
-    } else {
-      var body = this.props.children
-      var footer = null
+    let body = this.props.children
+    let footer = null
+
+    if (this.props.footer) {
+      footer = <div className="box-footer clearfix">{this.props.footer}</div>
     }
 
     return (

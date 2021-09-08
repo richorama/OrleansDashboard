@@ -1,26 +1,41 @@
-var React = require('react')
+import React from 'react'
 
-module.exports = class extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      grain_reference: '',
-      primary_key: '',
-      name: '',
-      startAt: '',
-      period: ''
-    }
-    this.handleChange = this.handleChange.bind(this)
-    this.renderReminder = this.renderReminder.bind(this)
-    this.filterData = this.filterData.bind(this)
+interface IReminder {
+  period: string
+  grainReference: string
+  primaryKey: string
+  activationCount: number
+  name: string
+  startAt: string
+}
+
+interface IProps {
+  data: IReminder[]
+}
+
+interface IState {
+  grain_reference: string
+  primary_key: string
+  name: string
+  startAt: string
+  period: string
+}
+
+export default class ReminderTable extends React.Component<IProps, IState> {
+  state: IState = {
+    grain_reference: '',
+    primary_key: '',
+    name: '',
+    startAt: '',
+    period: ''
   }
 
-  handleChange(e) {
-    this.setState({
-      [e.target.name]: e.target.value
-    })
+  handleChange = (e: any) => {
+    const newState: Partial<IState> = {}
+    newState[e.target.name as keyof IState] = e.target.value
+    this.setState(newState as IState)
   }
-  renderReminder(reminderData, index) {
+  renderReminder(reminderData: IReminder, index: number) {
     return (
       <tr key={index}>
         <td>{reminderData.grainReference}</td>
@@ -42,28 +57,24 @@ module.exports = class extends React.Component {
       </tr>
     )
   }
-  filterData(data) {
+  filterData(data: IReminder[]) {
     return data
       .filter(x =>
-        this.state['grain_reference']
-          ? x.grainReference.indexOf(this.state['grain_reference']) > -1
+        this.state.grain_reference
+          ? x.grainReference.includes(this.state.grain_reference)
           : x
       )
       .filter(x =>
-        this.state['primary_key']
-          ? x.primaryKey.indexOf(this.state['primary_key']) > -1
+        this.state.primary_key
+          ? x.primaryKey.includes(this.state.primary_key)
           : x
       )
+      .filter(x => (this.state.name ? x.name.includes(this.state.name) : x))
       .filter(x =>
-        this.state['name'] ? x.name.indexOf(this.state['name']) > -1 : x
+        this.state.startAt ? x.startAt.includes(this.state.startAt) : x
       )
       .filter(x =>
-        this.state['startAt']
-          ? x.startAt.indexOf(this.state['startAt']) > -1
-          : x
-      )
-      .filter(x =>
-        this.state['period'] ? x.period.indexOf(this.state['period']) > -1 : x
+        this.state.period ? x.period.includes(this.state.period) : x
       )
   }
   render() {

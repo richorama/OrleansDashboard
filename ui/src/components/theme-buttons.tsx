@@ -1,16 +1,21 @@
-var React = require('react')
+import React from 'react'
 
-module.exports = class ThemeButtons extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      light: this.props.defaultTheme !== 'dark'
-    }
-    this.pickLight = this.pickLight.bind(this)
-    this.pickDark = this.pickDark.bind(this)
+interface IProps {
+  defaultTheme: 'light' | 'dark'
+  light: () => void
+  dark: () => void
+}
+
+interface IState {
+  light: boolean
+}
+
+export default class ThemeButtons extends React.Component<IProps> {
+  state: IState = {
+    light: this.props.defaultTheme !== 'dark'
   }
 
-  pickLight(event) {
+  pickLight = (event: any) => {
     // Prevent link navigation.
     event.preventDefault()
 
@@ -18,7 +23,7 @@ module.exports = class ThemeButtons extends React.Component {
     this.setState({ light: true })
   }
 
-  pickDark(event) {
+  pickDark = (event: any) => {
     // Prevent link navigation.
     event.preventDefault()
 
