@@ -1,23 +1,28 @@
-var React = require('react')
-var Chart = require('react-chartjs').Line
+import React, { createRef } from 'react'
+import { Line } from 'react-chartjs'
+
+interface IProps {
+  timepoints: number[]
+  series: any[][]
+}
+
+interface IState {
+  width: number
+}
 
 // this control is a bit of a temporary hack, until I have a multi-series chart widget
-module.exports = class TimeSeriesChart extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = {
-      width: 0
-    }
-    this.getWidth = this.getWidth.bind(this)
+export default class TimeSeriesChart extends React.Component<IProps, IState> {
+  state = {
+    width: 0
   }
 
-  getWidth() {
-    if (!this.refs.container) {
-      return
-    }
+  getWidth = () => {
+    if (!this.containerRef.current) return
 
-    this.setState({ width: this.refs.container.offsetWidth })
+    this.setState({ width: this.containerRef.current.offsetWidth })
   }
+
+  containerRef = createRef<HTMLDivElement>()
 
   renderChart() {
     if (this.state.width === 0) {
@@ -112,7 +117,7 @@ module.exports = class TimeSeriesChart extends React.Component {
     }
 
     return (
-      <Chart
+      <Line
         data={data}
         options={options}
         width={this.state.width}
@@ -122,6 +127,6 @@ module.exports = class TimeSeriesChart extends React.Component {
   }
 
   render() {
-    return <div ref="container">{this.renderChart()}</div>
+    return <div ref={this.containerRef}>{this.renderChart()}</div>
   }
 }

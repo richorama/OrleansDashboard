@@ -1,26 +1,32 @@
-const React = require('react')
-const Chart = require('react-chartjs').Line
+import React, { createRef } from 'react'
+import { Line } from 'react-chartjs'
 
 const colours = [
   [120, 57, 136],
   [236, 151, 31]
 ]
 
+interface IProps {
+  series: string[][]
+}
+
+interface IState {
+  width: number
+}
+
 // this control is a bit of a temporary hack, until I have a multi-series chart widget
-module.exports = class extends React.Component {
-  constructor(props) {
-    super(props)
-    this.state = { width: 0 }
-    this.getWidth = this.getWidth.bind(this)
-    this.renderChart = this.renderChart.bind(this)
+export default class MultiSeriesChartWidget extends React.Component<
+  IProps,
+  IState
+> {
+  state: IState = { width: 0 }
+
+  getWidth = () => {
+    if (!this.containerRef.current) return
+    this.setState({ width: this.containerRef.current.offsetWidth - 20 })
   }
 
-  getWidth() {
-    if (!this.refs.container) return
-    this.setState({ width: this.refs.container.offsetWidth - 20 })
-  }
-
-  renderChart() {
+  renderChart = () => {
     if (this.state.width === 0) return setTimeout(this.getWidth, 0)
 
     var data = {
@@ -41,7 +47,7 @@ module.exports = class extends React.Component {
     }
 
     return (
-      <Chart
+      <Line
         data={data}
         options={{
           animation: false,
@@ -57,7 +63,9 @@ module.exports = class extends React.Component {
     )
   }
 
+  containerRef = createRef<HTMLDivElement>()
+
   render() {
-    return <div ref="container">{this.renderChart()}</div>
+    return <div ref={this.containerRef}>{this.renderChart()}</div>
   }
 }
